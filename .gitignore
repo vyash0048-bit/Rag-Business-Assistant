@@ -8,3 +8,9 @@ wheels/
 
 # Virtual environments
 .venv
+venv/
+
+# Data and Storage
+data/
+qdrant_storage/
+.env

@@ -1,4 +1,3 @@
-# src/ingestion/nhtsa_client.py
 import requests, json
 from pathlib import Path
 
@@ -10,6 +9,7 @@ def fetch_recalls(make, model, years=range(2020, 2026)):
         r = requests.get("https://api.nhtsa.gov/recalls/recallsByVehicle",
                           params={"make": make, "model": model, "modelYear": y})
         Path(f"data/raw/nhtsa/{make}_{model}_{y}_recalls.json").write_text(r.text)
+        print(f"Fetched recalls for {y} {make} {model}")
 
 if __name__ == "__main__":
     for make, model in MAKES_MODELS:

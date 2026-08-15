@@ -1,8 +1,7 @@
-# src/ingestion/sec_client.py
 import requests, json, time, os
 from pathlib import Path
 
-HEADERS = {"User-Agent": os.environ["SEC_USER_AGENT"]}
+HEADERS = {"User-Agent": os.environ.get("SEC_USER_AGENT", "MyCompany myemail@example.com")}
 COMPANIES = {"HMC": "0000715153", "TM": "0001094517", "F": "0000037996"}
 
 def fetch_company_facts(ticker, cik):
@@ -20,7 +19,7 @@ def fetch_recent_10k_urls(ticker, cik):
     forms = r["filings"]["recent"]
     urls = []
     for i, form in enumerate(forms["form"]):
-        if form == "10-K":
+        if form in ("10-K", "20-F"):
             accn = forms["accessionNumber"][i].replace("-", "")
             doc = forms["primaryDocument"][i]
             urls.append(f"https://www.sec.gov/Archives/edgar/data/{int(cik)}/{accn}/{doc}")
@@ -28,9 +27,11 @@ def fetch_recent_10k_urls(ticker, cik):
 
 if __name__ == "__main__":
     for ticker, cik in COMPANIES.items():
+        print(f"Fetching facts for {ticker}")
         fetch_company_facts(ticker, cik)
         for url in fetch_recent_10k_urls(ticker, cik):
             fname = f"data/raw/sec/{ticker}_{url.split('/')[-1]}"
+            print(f"Downloading {url} to {fname}")
             r = requests.get(url, headers=HEADERS)
             Path(fname).write_bytes(r.content)
             time.sleep(0.3)  # SEC rate limit courtesy
