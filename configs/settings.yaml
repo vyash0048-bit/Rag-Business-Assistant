@@ -1,0 +1,41 @@
+embedding:
+  model: "BAAI/bge-large-en-v1.5"
+  dimension: 1024
+  batch_size: 32
+  query_prefix: "Represent this query for retrieval: "
+  passage_prefix: "Represent this document for retrieval: "
+
+reranker:
+  model: "BAAI/bge-reranker-v2-m3"
+  min_score: -2.0
+
+chunking:
+  chunk_size: 512
+  chunk_overlap: 64
+  separators:
+    - "\n\n"
+    - "\n"
+    - ". "
+    - "; "
+    - " "
+
+retrieval:
+  top_k_retrieval: 30
+  top_k_rerank: 7
+  score_threshold: 0.3
+
+vectorstore:
+  collection: "business_docs"
+  distance: "cosine"
+  upload_batch_size: 64
+
+llm:
+  model: "gemini-3.7-flash"
+  provider: "google"
+
+paths:
+  raw_data: "data/raw"
+  processed_data: "data/processed"
+  chunks: "data/chunks/chunks.jsonl"
+  embeddings_dir: "data/embeddings"
+  eval_set: "data/evaluation/eval_set.jsonl"

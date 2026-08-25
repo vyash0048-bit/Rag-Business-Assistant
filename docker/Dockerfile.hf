@@ -1,0 +1,21 @@
+# docker/Dockerfile.hf
+FROM python:3.12-slim
+
+# Create a non-root user (Hugging Face Spaces requirement)
+RUN useradd -m -u 1000 user
+USER user
+ENV PATH="/home/user/.local/bin:$PATH"
+
+WORKDIR /app
+
+COPY --chown=user requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY --chown=user . .
+ENV PYTHONPATH=/app
+
+# Hugging Face Spaces require port 7860
+ENV PORT=7860
+EXPOSE 7860
+
+CMD ["python", "src/frontend/app.py"]

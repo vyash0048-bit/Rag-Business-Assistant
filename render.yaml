@@ -1,0 +1,40 @@
+services:
+  - type: web
+    name: rag-backend
+    env: docker
+    dockerfilePath: docker/Dockerfile.backend
+    plan: free
+    healthCheckPath: /health
+    envVars:
+      # Secrets (Render will prompt you for these in the dashboard)
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: GROQ_API_KEY
+        sync: false
+      - key: DB_URL
+        sync: false
+      - key: QDRANT_URL
+        sync: false
+      - key: QDRANT_API_KEY
+        sync: false
+      - key: LANGSMITH_API_KEY
+        sync: false
+      # Public variables
+      - key: LANGSMITH_PROJECT
+        value: rag-business-assistant
+      - key: LANGSMITH_TRACING
+        value: "true"
+
+  - type: web
+    name: rag-frontend
+    env: docker
+    dockerfilePath: docker/Dockerfile.frontend
+    plan: free
+    healthCheckPath: /health
+    envVars:
+      # This magically tells Render to pass the backend's URL to the frontend!
+      - key: BACKEND_URL
+        fromService:
+          type: web
+          name: rag-backend
+          property: url
