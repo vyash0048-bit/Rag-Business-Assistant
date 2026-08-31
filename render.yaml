@@ -32,9 +32,6 @@ services:
     plan: free
     healthCheckPath: /health
     envVars:
-      # This magically tells Render to pass the backend's URL to the frontend!
+      # Render provides an internal network, so the frontend can hit the backend directly!
       - key: BACKEND_URL
-        fromService:
-          type: web
-          name: rag-backend
-          property: url
+        value: http://rag-backend:8000
