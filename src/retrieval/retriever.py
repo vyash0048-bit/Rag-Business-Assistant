@@ -24,9 +24,9 @@ def retrieve(query, top_k=30, score_threshold=0.3, company_filter=None, doc_type
         
     flt = Filter(must=conditions) if conditions else None
     
-    hits = client.search(
+    response = client.query_points(
         collection_name=COLLECTION, 
-        query_vector=qvec, 
+        query=qvec, 
         limit=top_k, 
         query_filter=flt,
         score_threshold=score_threshold
@@ -35,4 +35,4 @@ def retrieve(query, top_k=30, score_threshold=0.3, company_filter=None, doc_type
     return [{"text": h.payload["text"], "source": h.payload["source"],
               "page": h.payload["page"], "company": h.payload["company"], 
               "doc_type": h.payload.get("doc_type", ""), "fiscal_year": h.payload.get("fiscal_year", ""),
-              "score": h.score} for h in hits]
+              "score": h.score} for h in response.points]

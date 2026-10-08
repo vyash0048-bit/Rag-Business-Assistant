@@ -14,3 +14,4 @@ mcp
 
 google-genai
 tenacity
+langchain-google-genai

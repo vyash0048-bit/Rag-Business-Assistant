@@ -10,8 +10,10 @@ from dotenv import load_dotenv
 load_dotenv()
 
 url = os.environ.get("QDRANT_URL")
+api_key = os.environ.get("QDRANT_API_KEY")
+
 if url:
-    client = QdrantClient(url=url)
+    client = QdrantClient(url=url, api_key=api_key)
 else:
     client = QdrantClient(path="qdrant_storage")
 

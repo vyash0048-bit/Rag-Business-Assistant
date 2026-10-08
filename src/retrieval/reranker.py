@@ -12,17 +12,17 @@ def get_reranker():
 def rerank(query, candidates, top_k=7, min_score=-2.0):
     if not candidates:
         return []
-    
+        
     model = get_reranker()
-    pairs = [(query, c["text"]) for c in candidates]
+    pairs = [[query, doc["text"]] for doc in candidates]
     scores = model.predict(pairs)
     
     scored_candidates = []
-    for c, s in zip(candidates, scores):
-        score = float(s)
+    for doc, score in zip(candidates, scores):
+        doc_copy = copy.deepcopy(doc)
+        doc_copy["rerank_score"] = float(score)
         if score >= min_score:
-            c_copy = copy.deepcopy(c)
-            c_copy["rerank_score"] = score
-            scored_candidates.append(c_copy)
+            scored_candidates.append(doc_copy)
             
-    return sorted(scored_candidates, key=lambda x: x["rerank_score"], reverse=True)[:top_k]
+    scored_candidates.sort(key=lambda x: x["rerank_score"], reverse=True)
+    return scored_candidates[:top_k]

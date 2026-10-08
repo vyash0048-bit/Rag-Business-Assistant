@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Business Intelligence Assistant</title>
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
   <style>
     :root {
       --bg-primary: #0f172a;
@@ -217,6 +218,9 @@
       transition: all 0.2s;
     }
     .example-btn:hover { border-color: var(--accent); color: var(--accent); }
+    .answer table { border-collapse: collapse; width: 100%; margin: 10px 0; font-size: 13px; }
+    .answer th, .answer td { border: 1px solid var(--border); padding: 8px; text-align: left; }
+    .answer th { background: var(--bg-primary); }
   </style>
 </head>
 <body>
@@ -277,7 +281,7 @@
     div.className = `message ${role}`;
 
     let html = `<div class="label">${role === 'user' ? 'You' : 'Assistant'}</div>`;
-    html += `<div class="answer">${escapeHtml(text)}</div>`;
+    html += `<div class="answer">${role === 'bot' ? marked.parse(text) : escapeHtml(text)}</div>`;
 
     if (sources && sources.length > 0) {
       const id = 'src-' + Date.now();

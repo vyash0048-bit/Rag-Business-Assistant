@@ -20,7 +20,7 @@ def chat():
         resp = requests.post(
             f"{BACKEND_URL}/chat",
             json={"query": query, "company": company},
-            timeout=120,
+            timeout=300,
         )
         resp.raise_for_status()
         return jsonify(resp.json())

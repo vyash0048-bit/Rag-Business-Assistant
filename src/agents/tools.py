@@ -5,7 +5,10 @@ from src.retrieval.rag_answer import answer as rag_answer
 @tool
 def doc_search(query: str, company: str = None) -> str:
     """Search company filings (10-Ks) for narrative info like risks, strategy, business description."""
+    import time
+    print(f"[{time.strftime('%X')}] Tool doc_search called with query={query}, company={company}")
     r = rag_answer(query, company_filter=company)
+    print(f"[{time.strftime('%X')}] Tool doc_search completed")
     return r["answer"]
 
 @tool

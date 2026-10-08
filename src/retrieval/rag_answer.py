@@ -38,17 +38,21 @@ def answer(query, company_filter=None, system_prompt=DEFAULT_SYSTEM_PROMPT):
     )
     prompt = system_prompt.format(context=context, query=query)
     
+    from langchain_groq import ChatGroq
+    
     from tenacity import retry, wait_exponential, stop_after_attempt
-    @retry(wait=wait_exponential(min=15, max=120), stop=stop_after_attempt(10))
+    @retry(wait=wait_exponential(min=5, max=30), stop=stop_after_attempt(5))
     def _do_call():
-        return client.interactions.create(
-            model='gemini-3.7-flash',
-            input=prompt
+        llm = ChatGroq(
+            model="qwen/qwen3.8-27b",
+            api_key=os.environ["GROQ_API_KEY"],
+            max_tokens=250
         )
+        return llm.invoke(prompt)
     
     interaction = _do_call()
     
-    return {"answer": interaction.output_text, "sources": top}
+    return {"answer": interaction.content, "sources": top}
 
 if __name__ == "__main__":
     import json
